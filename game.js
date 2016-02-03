@@ -19,12 +19,16 @@ var level3Bonus = true;
 var level1Reset = true;
 var level2Reset = true;
 var level3Reset = true;
+var timer = 0;//Stores the interval ID for setInterval()
+var flag2 = true;
 
 //Player variables
 var playerHeight = 60;
 var playerWidth = 50;
 var playerSpeed = 5;//Moves 5px when arrow key is pressed
-var lives = 3;
+var lives = 15;
+var img = new Image();
+img.src = "player.png";
 
 //Initial player starting postion
 var playerX = (canvas.width-playerWidth)/2;
@@ -37,7 +41,8 @@ var player = {
   width: playerWidth,
   height: playerHeight,
   speed: playerSpeed,
-  lives: lives
+  lives: lives,
+  img: img
 };
 
 // Rock variables
@@ -68,18 +73,22 @@ var upPressed = false;
 var downPressed = false;
 
 //Places a rock at a random position at the top of the screen,
-//falling at a random speed
+//falling at a random speed. COlor and size/shape are based on
+//clock time
 function resetRock(rock) {
   if (clock <= 20) {
     rock.x = Math.random() * (canvas.width - rockWidth);
     rock.y = -100 - Math.random() * 40;
     rock.speed = 0.5 + Math.random() * 0.8;
+    rock.width = rockWidth;
+    rock.height = rockHeight;
+    rock.color = "gray";
   }
   else if (clock <= 40) {
     rock.width = Math.random() * 40 + 10;
     rock.height = Math.random() * 60 + 20;
     rock.x = Math.random() * (canvas.width - rockWidth);
-    rock.y = -200 - Math.random() * 30;
+    rock.y = -300 - Math.random() * 30;
     rock.speed = 1 + Math.random() * 0.8;
     rock.color = "black";
   }
@@ -101,9 +110,12 @@ function resetRock(rock) {
   }
 }
 
-//Event listeners for arrow key presses
-document.addEventListener("keydown", keyDownHandler, false);
-document.addEventListener("keyup", keyUpHandler, false);
+//Runs each rock in rocks array through resetRock()
+function resetRocks() {
+  for (var i = 0; i <rocks.length; i++) {
+    resetRock(rocks[i]);
+  }
+}
 
 //Checks to see if arrow keys are pressed
 function keyDownHandler(e) {
@@ -139,11 +151,7 @@ function keyUpHandler(e) {
 
 //Draws the player
 function drawPlayer () {
-  ctx.beginPath();
-  ctx.fillStyle = "#FF0000";
-  ctx.fillRect(player.x, player.y, player.width, player.height);
-  ctx.fill();
-  ctx.closePath();
+  ctx.drawImage(player.img, player.x, player.y, player.width, player.height);
 }
 
 //Level 1 rocks are gray
@@ -194,16 +202,16 @@ function level1 () {
   for (var i = 0; i < rocks.length; i++) {
     var rock = rocks[i];
 
-      // test for rock-block collision
+      //Tests for rock-block collision
       if (isColliding(rock, player)) {
         lives--;
         resetRock(rock);//Stops them from continuing to collide
       }
 
-      // advance the rocks
+      //Advances the rocks
       rock.y += rock.speed*2;
 
-      // if the rock is below the canvas
+      //If the rock is below the canvas
       if (rock.y > canvas.height) {
         resetRock(rock);
       }
@@ -220,16 +228,30 @@ if (clock >= 19) {
   } else {
     drawPlayer();
     drawRocks2();
-    if (clock < 3)
+    if (clock < 2)
       drawLevel();
   }
+
 }
 
 //Draws level 2
 function level2 () {
-if (level === 1)
+
+  //if (flag2) {
+  //  resetRocks();
+  //  flag2 = false;
+  //}
+
+  //Reset player to initial starting position and increment level #
+  if (level === 1) {
+    player.x = (canvas.width-playerWidth)/2;
+    player.y = canvas.height-playerHeight;
     level++;
+  }
+
+  //Change background to new level
   document.getElementById("myCanvas").style.background = "url('http://cdn.akamai.steamstatic.com/steamcommunity/public/images/items/335550/06beefca8fcadd4479239bdee65630dcacd084fc.jpg')";
+
   for (var i = 0; i < rocks.length; i++) {
     var rock = rocks[i];
 
@@ -248,10 +270,10 @@ if (level === 1)
     }
   }
   if (clock === 21 && level1Reset) {
-    console.log("in here");
+    console.log(level1Reset);
     for (var j = 0; j < rocks.length; j++) {
-      var rock = rocks[j];
-      resetRock(rock);
+      console.log("rock" + j + "is reset!");
+      resetRock(rocks[j]);
     }
     level1Reset = false;
   }
@@ -266,15 +288,20 @@ if (level === 1)
   } else {
     drawPlayer();
     drawRocks2();
-    if (clock < 24)
+    if (clock < 23)
       drawLevel();
   }
 }
 
 //Draws level three
 function level3 () {
-  if (level === 2)
+
+  //Reset player to initial starting position and increment level #
+  if (level === 2) {
+    player.x = (canvas.width-playerWidth)/2;
+    player.y = canvas.height-playerHeight;
     level++;
+  }
 
   document.getElementById("myCanvas").style.background = "url('https://annalouiseyoungs.files.wordpress.com/2013/11/snowscene.png')";
   for (var i = 0; i < rocks.length; i++) {
@@ -315,14 +342,19 @@ function level3 () {
   } else {
     drawPlayer();
     drawRocks3();
-    if (clock < 44)
+    if (clock < 43)
      drawLevel();
   }
 }
 //Draws level four
 function level4 () {
-  if (level === 3)
+
+  //Reset player to initial starting position and increment level #
+  if (level === 3) {
+    player.x = (canvas.width-playerWidth)/2;
+    player.y = canvas.height-playerHeight;
     level++;
+  }
 
   document.getElementById("myCanvas").style.background = "url('https://s-media-cache-ak0.pinimg.com/originals/47/0d/67/470d677d06f32921b191ab560f9a24cb.gif')";
   for (var i = 0; i < rocks.length; i++) {
@@ -346,7 +378,6 @@ function level4 () {
 
   }
   if (clock === 61 && level3Reset) {
-    console.log("in here");
     for (var j = 0; j < rocks.length; j++) {
       var rock = rocks[j];
       resetRock(rock);
@@ -365,12 +396,13 @@ function level4 () {
   } else {
     drawPlayer();
     drawRocks3();
-    if (clock < 64)
+    if (clock < 63)
       drawLevel();
   }
 }
 
 function draw() {
+
   //Keep this if-statement up here so the # of lives on screen
   //has time to update to zero before the game over alert pops up
   if (lives <= 0) {
@@ -385,18 +417,21 @@ function draw() {
   } else if (clock < 41) {
     if (level1Bonus) {
       score += 100;
+      resetRocks();
       level1Bonus = false;
     }
       level2();
   } else if (clock < 61) {
     if (level2Bonus) {
       score += 100;
+      resetRocks();
       level2Bonus = false;
     }
     level3();
   } else {
     if (level3Bonus) {
       score += 100;
+      resetRocks();
       level3Bonus = false;
     }
     level4();
@@ -454,22 +489,35 @@ function drawLevel () {
 
 //Increments the score and clock every second
 function tick() {
-  window.setTimeout("tick()", 1000);
   score += 2;
   clock += 1;
 }
 
 function endGame() {
+  gameOn = false;
   $("#myCanvas").hide();
   $("#score").text(score);
   $(".finishScreen").show();
 }
 
-//On click the game starts
-$(".start").click(function() {
-  $(".splashScreen").hide();
-  $(".finishScreen").hide();
-  $("#myCanvas").show();
-  draw();
-  window.setTimeout("tick()", 1000);
-});
+function gameInit() {
+  if (timer !== 0)
+    clearInterval(timer);
+
+  flag2 = true;
+  level1Bonus = true;
+  level2Bonus = true;
+  level3Bonus = true;
+  level1Reset = true;
+  level2Reset = true;
+  level3Reset = true;
+  score = 0;
+  clock = 0;
+  lives = 15;
+  level = 1;
+  resetRocks();
+  player.x = (canvas.width-playerWidth)/2;
+  player.y = canvas.height-playerHeight;
+}
+
+
