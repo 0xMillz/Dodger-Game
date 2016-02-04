@@ -124,7 +124,6 @@ function resetRock(rock) {
     rock.y = -200 - Math.random() * 40;
     rock.speed = 3 + Math.random() * 3;
     rock.img.src = "fire1.png";
-    console.log("in reset!")
     }
 }
 
@@ -207,11 +206,9 @@ function drawRocks4 () {
   for (var i = 0; i < rocks.length; i++) {
     var rock = rocks[i];
     if (rock.flipImg === false) {
-      console.log("drawing fire1");
       ctx.drawImage(rockImage, 0, 0, 45, 90, rock.x, rock.y, rock.width, rock.height);
     }
     else {
-      console.log("drawing fire2")
       ctx.drawImage(rockImage3, 0, 0, 45, 90, rock.x, rock.y, rock.width, rock.height);
     }
   }
@@ -404,13 +401,13 @@ function level4 () {
   for (var i = 0; i < rocks.length; i++) {
     var rock = rocks[i];
 
-      // test for rock-block collision
+      // Test for rock-block collision
       if (isColliding(rock, player)) {
         lives--;
         resetRock(rock);//Stops them from continuing to collide
       }
 
-      // advance the rocks
+      // Advance the rocks
       rock.y += rock.speed;
 
       // if the rock is below the canvas,
@@ -455,7 +452,6 @@ function level4 () {
   } else {
     drawPlayer();
     drawRocks4();
-    console.log("here!");
     if (clock < 62) {
       drawLevel();
     }
@@ -502,7 +498,7 @@ function draw() {
   }
   drawScore();
   drawLives();
-  drawClock();
+  //drawClock();
 
   if(rightPressed && player.x < canvas.width-playerWidth) {
     player.x+= 5;
@@ -524,25 +520,49 @@ function isColliding(a, b) {
 
 //Draws the score
 function drawScore() {
-    ctx.font = "16px Arial";
+  if (clock >=41 && clock <= 60) {
+    ctx.font = "20px Arial";
+    ctx.fillStyle = "#000000";
+    ctx.fillText("Score: "+ score, 8, 20);
+  }
+  else {
+    ctx.font = "20px Arial";
     ctx.fillStyle = "#0095DD";
     ctx.fillText("Score: "+ score, 8, 20);
+  }
 }
 
 //Draws the clock
 function drawClock() {
-    ctx.font = "16px Arial";
+  if (clock >=41 && clock <= 60) {
+    ctx.font = "20px Arial";
+    ctx.fillStyle = "#000000";
+    ctx.fillText("Clock: "+ clock, (canvas.width - 40)/2, 20);
+
+  }
+  else {
+    ctx.font = "20px Arial";
     ctx.fillStyle = "#0095DD";
     ctx.fillText("Clock: "+ clock, (canvas.width - 40)/2, 20);
+  }
 }
 
 //Draws # of lives left
 function drawLives() {
-    ctx.font = "16px Arial";
+  if (clock >= 41 && clock <= 60) {
+    ctx.font = "20px Arial";
+    ctx.fillStyle = "#000000";
+    ctx.fillText("Lives: "+ lives, canvas.width-80, 20);
+  }
+  else {
+    ctx.font = "20px Arial";
     ctx.fillStyle = "#0095DD";
-    ctx.fillText("Lives: "+ lives, canvas.width-65, 20);
+    ctx.fillText("Lives: "+ lives, canvas.width-80, 20);
+
+  }
 }
 
+//Draws the level # when a new level starts
 function drawLevel () {
   ctx.font = "60px Georgia";
   ctx.fillStyle = "black";

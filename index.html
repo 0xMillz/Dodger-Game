@@ -3,23 +3,29 @@
 <head>
     <meta charset="utf-8" />
     <title>Dodger</title>
-    <link rel=stylesheet type="text/css" href="styles.css">
+    <link rel=stylesheet type="text/css" href="https://bootswatch.com/superhero/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
 </head>
 <body>
   <div class="container">
-    <div class="splashScreen">
-      <h1>Dodger</h1>
-        <button class="start">Start Game</button>
+    <div class="row">
+        <div class="col-sm-1 col-md-2 col-lg-2"></div>
+        <div class="col-sm-10 col-md-8 col-lg-8"></div>
+          <div class="splashScreen">
+            <h1>Dodger</h1>
+            <p>Use the arrow keys to move. Avoid falling objects.</p>
+            <button class="start btn btn-primary btn-lg">Start Game</button>
+          </div>
+          <div class="finishScreen" style="display:none">
+            <h1>Game Over</h1>
+            <p>Your score was: <span id="score"></span></p>
+            <button class="start btn btn-primary btn-lg">Play Again</button>
+          </div>
+          <canvas id="myCanvas" width="640" height="435" style="display:none"></canvas>
+        <div class="col-sm-1 col-md-2 col-lg-2"></div>
     </div>
-    <div class="finishScreen" style="display:none">
-      <h1>Game Over</h1>
-      <p>Your score was: <span id="score"></span></p>
-      <button class="start">Play Again</button>
-    </div>
-    <canvas id="myCanvas" width="640" height="435" style="display:none"></canvas>
-    <script type="text/javascript" src="game.js"></script>
-    <script type="text/javascript" src="dom.js"></script>
   </div>
+  <script type="text/javascript" src="game.js"></script>
+  <script type="text/javascript" src="dom.js"></script>
 </body>
 </html>
