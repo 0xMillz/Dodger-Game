@@ -19,6 +19,8 @@ var ctx = canvas.getContext("2d");
 var score = 0;
 var clock = 0;
 var level = 1;//Game starts on level 1
+//These bonus variables allow 100 points to be added
+//to the score once and only once when a new level is started
 var level1Bonus = true;
 var level2Bonus = true;
 var level3Bonus = true;
@@ -26,13 +28,14 @@ var level1Reset = true;
 var level2Reset = true;
 var level3Reset = true;
 var timer = 0;//Stores the interval ID for setInterval()
-var newGame = true;
+var newGame = true;//Used to reset the rocks when a new game is started
 
 //Player variables
 var playerHeight = 60;
 var playerWidth = 40;
 var playerSpeed = 5;//Moves 5px when arrow key is pressed
 var lives = 5;
+//Image for the player
 var img = new Image();
 img.src = "player.png";
 
@@ -56,15 +59,20 @@ var rockWidth = 50;
 var rockHeight = 50;
 var totalRocks = 18;
 var rocks = [];//Array of rock objects
+//Level 1 rocks
 var rockImage = new Image();
 rockImage.src = "rocks.png";
+//Level 2 rocks image roated 180 degrees horizontaly
 var rockImage2 = new Image();
 rockImage2.src = "stal2.png";
-var rockImage3 = new Image();//Second fire rock
+//Level 4 alternate fire rock image
+var rockImage3 = new Image();
 rockImage3.src = "fire2.png";
-var bossImage = new Image();//Second fire rock
+//Level 4 final boss image
+var bossImage = new Image();
 bossImage.src = "boss.png";
 
+//Level 4 final boss object
 var boss = {
   x: 200,
   y: -125,
@@ -74,7 +82,7 @@ var boss = {
   speed: 5
 };
 
-//Adds a rock to the array of rocks
+//Adds a rock to the array of rocks when page is first loaded
 for (var i = 0; i < totalRocks; i++) {
     var rock = {
         width: rockWidth,
@@ -83,6 +91,8 @@ for (var i = 0; i < totalRocks; i++) {
         img: rockImage,
         flipImg: false
     };
+    //Breaks to rocks into two groups so they can be assigned
+    //alternate images in the applicable levels
     if (i % 2 === 0)
       rock.flipImg = true;
 
@@ -97,8 +107,7 @@ var upPressed = false;
 var downPressed = false;
 
 //Places a rock at a random position at the top of the screen,
-//falling at a random speed. Color and size/shape are based on
-//clock time
+//falling at a random speed. Rocks are assigned different images depending on current level which is determined by clock time.
 function resetRock(rock) {
   if (clock <= 20) {
     rock.x = Math.random() * (canvas.width - rockWidth);
@@ -134,10 +143,12 @@ function resetRock(rock) {
     }
 }
 
+//Resets the final boss's postion to the top of the screen
 function resetBoss (){
   boss.x = Math.random() * (canvas.width - boss.width);
   boss.y = -200 - Math.random() * 40;
 }
+
 //Runs each rock in rocks array through resetRock()
 function resetRocks() {
   for (var i = 0; i <rocks.length; i++) {
@@ -182,7 +193,7 @@ function drawPlayer () {
   ctx.drawImage(player.img, player.x, player.y, player.width, player.height);
 }
 
-//Level 1 rocks are sprites
+//Level 1 rocks are rock sprites
 function drawRocks () {
   for (var i = 0; i < rocks.length; i++) {
         var rock = rocks[i];
@@ -190,10 +201,11 @@ function drawRocks () {
     }
 }
 
-//Level 2 rocks are black
+//Level 2 rocks are stalactite sprites
 function drawRocks2 () {
   for (var i = 0; i < rocks.length; i++) {
     var rock = rocks[i];
+  //This if-else assigns two different image based on flipImg variable
     if (rock.flipImg === false)
       ctx.drawImage(rockImage, 0, 0, 45, 90, rock.x, rock.y, rock.width, rock.height);
     else
@@ -201,7 +213,7 @@ function drawRocks2 () {
   }
 }
 
-//Level 3 rocks are white
+//Level 3 rocks are snowflake sprites
 function drawRocks3 () {
   for (var i = 0; i < rocks.length; i++) {
         var rock = rocks[i];
@@ -209,9 +221,11 @@ function drawRocks3 () {
     }
 }
 
+//Level 4 rocks are fire sprites
 function drawRocks4 () {
   for (var i = 0; i < rocks.length; i++) {
     var rock = rocks[i];
+  //This if-else assigns two different image based on flipImg variable
     if (rock.flipImg === false) {
       ctx.drawImage(rockImage, 0, 0, 45, 90, rock.x, rock.y, rock.width, rock.height);
     }
@@ -221,6 +235,7 @@ function drawRocks4 () {
   }
 }
 
+//This draws the boss to the screen
 function drawBoss () {
   ctx.drawImage(bossImage, 0, 0, 259, 125, boss.x, boss.y, boss.width, boss.height);
 
@@ -260,7 +275,7 @@ function level1 () {
       //Advances the rocks
       rock.y += rock.speed;
 
-      //If the rock is below the canvas
+      //If the rock is below the canvas, it is reset to the top
       if (rock.y > canvas.height) {
         resetRock(rock);
       }
@@ -286,11 +301,6 @@ if (clock >= 19) {
 //Draws level 2
 function level2 () {
 
-  //if (flag2) {
-  //  resetRocks();
-  //  flag2 = false;
-  //}
-
   //Reset player to initial starting position and increment level #
   if (level === 1) {
     player.x = (canvas.width-playerWidth)/2;
@@ -304,20 +314,21 @@ function level2 () {
   for (var i = 0; i < rocks.length; i++) {
     var rock = rocks[i];
 
-    // test for rock-block collision
+    //Test for rock-block collision
     if (isColliding(rock, player)) {
       lives--;
       resetRock(rock);//Stops them from continuing to collide
     }
 
-    // advance the rocks
+    //Advance the rocks
     rock.y += rock.speed;
 
-    // if the rock is below the canvas,
+    //If the rock is below the canvas,
     if (rock.y > canvas.height) {
       resetRock(rock);
     }
   }
+  //Removes falling rocks to prepare for the start of next level
   if (clock === 21 && level1Reset) {
     for (var j = 0; j < rocks.length; j++) {
       resetRock(rocks[j]);
@@ -326,7 +337,7 @@ function level2 () {
   }
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  //Shake the screen for three clock ticks when level is entered
+  //Shake the screen before new level is entered
   if (clock >= 39) {
     preShake();
     drawPlayer();
@@ -380,7 +391,7 @@ function level3 () {
   }
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  //Shake the screen for three clock ticks when level is entered
+  //Shake the screen when new level is entered
   if (clock >= 59) {
     preShake();
     drawPlayer();
@@ -393,6 +404,7 @@ function level3 () {
      drawLevel();
   }
 }
+
 //Draws level four
 function level4 () {
 
@@ -417,7 +429,7 @@ function level4 () {
       // Advance the rocks
       rock.y += rock.speed;
 
-      // if the rock is below the canvas,
+      //Reset if the rock is below the canvas,
       if (rock.y > canvas.height) {
           resetRock(rock);
       }
@@ -425,7 +437,7 @@ function level4 () {
         resetRock(rock);
 
   }
-
+  //Checks if boss and player are colliding
   if (clock >= 87) {
     // test for rock-boss collision
     if (isColliding(boss, player)) {
@@ -450,7 +462,7 @@ function level4 () {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  //Shake the screen for three clock ticks when level is entered
+  //Shake the screen before new level is entered
   if (clock > 82 && clock < 87) {
     preShake();
     drawPlayer();
@@ -507,6 +519,7 @@ function draw() {
   drawLives();
   //drawClock();
 
+  //Adjusts the player's x & y positions
   if(rightPressed && player.x < canvas.width-playerWidth) {
     player.x+= 5;
   }
@@ -582,6 +595,7 @@ function tick() {
   clock += 1;
 }
 
+//Hides the canvas screen
 function endGame() {
   gameOn = false;
   $("#myCanvas").hide();
@@ -589,11 +603,12 @@ function endGame() {
   $(".finishScreen").show();
 }
 
+//Initalizes variables when game is started
 function gameInit() {
   if (timer !== 0)
     clearInterval(timer);
 
-  flag2 = true;
+  newGame = true;
   level1Bonus = true;
   level2Bonus = true;
   level3Bonus = true;
