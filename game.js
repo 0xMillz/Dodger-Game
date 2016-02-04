@@ -1,7 +1,14 @@
-/* Manuever with the arrows keys to avoid the falling rocks.
- * After every 20 seconds of gameplay you advance to the next level.
- * You have three lives */
-
+/* Author: Mills McIlroy
+ * Date: February 4, 2016
+ * Title: Dodger
+ * Description: This file contains the javascript logic for the
+ * Dodger game. The game uses javascript, html5 canvas, and jquery to
+ * display the game to the user.
+ * To play, manuever with the arrows keys to avoid
+ * the falling rocks. After every 20 seconds of gameplay you advance
+ * to the next level. You have three lives. The images used for the
+ * game are not my own and were found via Google.
+ */
 
 //Stores reference to the <canvas> element
 var canvas = document.getElementById("myCanvas");

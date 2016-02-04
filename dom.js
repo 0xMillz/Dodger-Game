@@ -1,3 +1,4 @@
+
 //On click the game starts
 $(".start").click(function() {
   //Reset all game variables to original state
