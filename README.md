@@ -1,6 +1,4 @@
-# Mills McIlroy's Personal Project
-
-## Functions and Uses:
+#Functions and Uses:
 
 I'm creating a "dodger" game for my personal project. Objects will fall from the top of the game screen and your character at the bottom
 will have to dodge them as they fall past. If you are hit by a falling object the game is over. Your score will be based on time survived + bonus points for every level completed. 
